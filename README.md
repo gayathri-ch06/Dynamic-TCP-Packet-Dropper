@@ -1,5 +1,5 @@
 # Dynamic-TCP-Packet-Dropper
-This project showcases how to drop TCP packets targeted at port 4040 by leveraging eBPF in a Rust-based environment. The combination of Rust, eBPF and Cilium allows for the efficient, kernel-level packet filtering with enhanced safety.
+This project showcases how to drop TCP packets targeted at port 4040 by leveraging eBPF in a Rust-based environment. The combination of Rust, eBPF  allows for the efficient, kernel-level packet filtering with enhanced safety.
 
 # Requirements
 1. A Linux operating system
