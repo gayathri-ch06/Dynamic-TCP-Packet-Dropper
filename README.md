@@ -3,7 +3,7 @@ This project showcases how to drop TCP packets targeted at port 4040 by leveragi
 
 # Requirements
 1. A Linux operating system
-2. Essential package:
+2. Essential package
 
 # Main Components
 1. The project employs data structures that enable interaction between kernel space and userspace.
