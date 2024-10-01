@@ -19,7 +19,7 @@ This project demonstrates how to block specific TCP packets on a designated port
 2. It invloves logic to extract relevant packet headers, specifically Ethernet, IP, and TCP headers to inspect network traffic. The program identifies packets intended for port 4040 and drops them accordingly.
 
 # How it works
-**Initialization**: The eBPF program is attached to a network interface.
-**Packet Interception:** Incoming network packets are intercepted and analyzed by the eBPF program.
-**Header Inspection:** Ethernet, IP, and TCP headers are extracted to determine the destination port.
-**Packet Dropping:** If a packet is targeting port 4040, it is dropped. Otherwise, it is allowed to pass through the network.
+1.**Initialization**: The eBPF program is attached to a network interface.
+2.**Packet Interception:** Incoming network packets are intercepted and analyzed by the eBPF program.
+3.**Header Inspection:** Ethernet, IP, and TCP headers are extracted to determine the destination port.
+4.**Packet Dropping:** If a packet is targeting port 4040, it is dropped. Otherwise, it is allowed to pass through the network.
