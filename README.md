@@ -1,9 +1,18 @@
 # Dynamic-TCP-Packet-Dropper
-This project showcases how to drop TCP packets targeted at port 4040 by leveraging eBPF in a Rust-based environment. The combination of Rust, eBPF  allows for the efficient, kernel-level packet filtering with enhanced safety.
+This project demonstrates how to block specific TCP packets on a designated port using eBPF (Extended Berkeley Packet Filter) with Rust. The program loads an eBPF kernel program that monitors network traffic and drops any TCP packets coming from or heading to port 4040. The user space code manages the interaction between the eBPF kernel program and the user, allowing configuration and logging.
 
-# Requirements
-1. A Linux operating system
-2. Essential package
+# Features
+1. ABlocks TCP packets on a specific port (default: 4040).
+2. User-space program written in Rust to manage eBPF programs and maps.
+3. Modular structure with separation of concerns for eBPF program loading, packet filtering, and user interaction.
+4. Support for attaching to the network interface using XDP (eXpress Data Path).
+5. Logging and error-handling mechanisms in the user space.
+
+# Installation
+1. **Rust**: Install Rust and the cargo build tool.
+2. **AYA**: This project uses the aya library, which is a pure Rust eBPF library that supports the eBPF targets.
+3. **Linux Kernel**: Linux distribution with kernel version 5.x or above to support eBPF.
+4. **clang and LLVM**: Required for compiling eBPF programs.
 
 # Main Components
 1. The project employs data structures that enable interaction between kernel space and userspace.
