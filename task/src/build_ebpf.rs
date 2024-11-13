@@ -66,3 +66,16 @@ pub fn build_ebpf(opts: Options) -> Result<(), anyhow::Error> {
     assert!(status.success());
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use clap::Parser;
+
+    #[test]
+    fn test_architecture_display() {
+        assert_eq!(Architecture::BpfEl.to_string(), "bpfel-unknown-none");
+        assert_eq!(Architecture::BpfEb.to_string(), "bpfeb-unknown-none");
+    }
+
+}
