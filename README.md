@@ -52,3 +52,8 @@ cargo build
 cargo task run
 ```
 
+## Test
+```bash
+cargo test
+```
+
