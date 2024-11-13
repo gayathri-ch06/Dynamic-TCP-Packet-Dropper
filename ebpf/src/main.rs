@@ -131,3 +131,65 @@ fn try_xdp_firewall(ctx: XdpContext) -> Result<u32, ()> {
     let action = block_port_fn(&ctx, protocol, EthHdr::LEN + Ipv4Hdr::LEN);
     Ok(action)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use aya_ebpf::programs::XdpContext;
+    use core::ptr;
+
+    // Mock context for testing
+    fn mock_context() -> XdpContext {
+        unsafe { core::mem::zeroed() }
+    }
+
+    #[test]
+    fn test_block_ip() {
+        unsafe {
+            BLOCKLIST.insert(0x0A000001, 1, 0).unwrap();
+        }
+        assert!(block_ip(0x0A000001));
+        assert!(!block_ip(0x0A000002));
+    }
+
+    #[test]
+    fn test_block_port() {
+        unsafe {
+            PORT_BLOCKLIST.insert(80, 1, 0).unwrap();
+        }
+        assert!(block_port(80));
+        assert!(!block_port(443));
+    }
+
+    #[test]
+    fn test_block_ip_fn() {
+        let ctx = mock_context();
+        unsafe {
+            BLOCKLIST.insert(0x0A000001, 1, 0).unwrap();
+        }
+        assert_eq!(block_ip_fn(&ctx, 0x0A000001), xdp_action::XDP_DROP);
+        assert_eq!(block_ip_fn(&ctx, 0x0A000002), xdp_action::XDP_PASS);
+    }
+
+    #[test]
+    fn test_block_port_fn_tcp() {
+        let ctx = mock_context();
+        unsafe {
+            PORT_BLOCKLIST.insert(22, 1, 0).unwrap();
+        }
+        let tcphdr = TcpHdr { dest: u16::to_be(22), ..Default::default() };
+        let tcphdr_ptr = &tcphdr as *const _ as *const TcpHdr;
+
+        assert_eq!(block_port_fn(&ctx, 6, tcphdr_ptr as usize), xdp_action::XDP_DROP);
+    }
+
+    #[test]
+    fn test_try_xdp_firewall() {
+        let ctx = mock_context();
+        unsafe {
+            BLOCKLIST.insert(0xC0A80001, 1, 0).unwrap();
+            PORT_BLOCKLIST.insert(8080, 1, 0).unwrap();
+        }
+        assert_eq!(try_xdp_firewall(ctx).unwrap_or(xdp_action::XDP_ABORTED), xdp_action::XDP_DROP);
+    }
+}
