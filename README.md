@@ -19,7 +19,7 @@ This project demonstrates how to block specific TCP packets on a designated port
 1. **Rust**: Install Rust and the cargo build tool.
 2. **AYA**: This project uses the aya library, which is a pure Rust eBPF library that supports the eBPF targets.
 3. **Linux Kernel**: Linux distribution with kernel version 5.x or above to support eBPF.
-4. **clang and LLVM**: Required for compiling eBPF programs.
+4. **LLVM**: Required for compiling eBPF programs.
 
 # Main Components
 1. The project employs data structures that enable interaction between kernel space and userspace.
