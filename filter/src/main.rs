@@ -41,7 +41,7 @@ async fn main() -> Result<(), anyhow::Error> {
         let mut port_blocklist: HashMap<_, u16, u16> = HashMap::try_from(bpf.map_mut("PORT_BLOCKLIST").unwrap())?;
         let blocked_port: u16 = 80;
         port_blocklist.insert(blocked_port, 0, 0)?;
-        info!("Blocking Port: 443 (HTTPS)");
+        info!("Blocking Port: 80 (HTTPS)");
     } // `port_blocklist` mutable borrow ends here
 
     // Blocking IPs logic
