@@ -35,7 +35,7 @@ This project demonstrates how to block specific TCP packets on a designated port
 - Essential development packages like `build-essential`, `libssl-dev`, `clang`, `llvm`, `git`, `nginx`, etc.
 - Rust and necessary toolchains (stable and nightly), along with **BPF-Linker** for eBPF compilation.
 
-# Main Components
+### Main Components
 1. The project employs data structures that enable interaction between kernel space and userspace.
 2. It invloves logic to extract relevant packet headers, specifically Ethernet, IP, and TCP headers to inspect network traffic. The program identifies packets intended for port 4040 and drops them accordingly.
 ### How it works
