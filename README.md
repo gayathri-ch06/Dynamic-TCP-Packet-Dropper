@@ -80,7 +80,7 @@ Actions performed by the application are logged in the application.log file.
 the above command compiles ebpf code.
 
 ## Stopping the Application
-To stop the application, type exit and then use Ctrl+C to terminate the Docker container.
+To stop the application, type exit and then use Ctrl+C to terminate the application
 
 ## Build eBPF
 
