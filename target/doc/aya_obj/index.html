@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="An eBPF object file parsing library with BTF and relocation support."><title>aya_obj - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="aya_obj" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0-nightly (a47555110 2024-11-22)" data-channel="nightly" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../static.files/storage-59e33391.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-893ab5e7.css"></noscript><link rel="icon" href="https://aya-rs.dev/assets/images/crabby.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button><a class="logo-container" href="../aya_obj/index.html"><img src="https://aya-rs.dev/assets/images/crabby.svg" alt=""></a></nav><nav class="sidebar"><div class="sidebar-crate"><a class="logo-container" href="../aya_obj/index.html"><img src="https://aya-rs.dev/assets/images/crabby.svg" alt="logo"></a><h2><a href="../aya_obj/index.html">aya_obj</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#status" title="Status">Status</a></li><li><a href="#overview" title="Overview">Overview</a></li><li><a href="#example" title="Example">Example</a></li></ul><h3><a href="#reexports">Crate Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <span>aya_obj</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/aya_obj/lib.rs.html#1-123">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>An eBPF object file parsing library with BTF and relocation support.</p>
+<h2 id="status"><a class="doc-anchor" href="#status">§</a>Status</h2>
+<p>This crate includes code that started as internal API used by
+the <a href="https://github.com/aya-rs/aya">aya</a> crate. It has been split out so that it can be used by
+other projects that deal with eBPF object files. Unless you’re writing
+low level eBPF plumbing tools, you should not need to use this crate
+but see the <a href="https://github.com/aya-rs/aya">aya</a> crate instead.</p>
+<p>The API as it is today has a few rough edges and is generally not as
+polished nor stable as the main <a href="https://github.com/aya-rs/aya">aya</a> crate API. As always,
+improvements welcome!</p>
+<h2 id="overview"><a class="doc-anchor" href="#overview">§</a>Overview</h2>
+<p>eBPF programs written with <a href="https://github.com/libbpf/libbpf">libbpf</a> or <a href="https://github.com/aya-rs/aya">aya-bpf</a> are usually compiled
+into an ELF object file, using various sections to store information
+about the eBPF programs.</p>
+<p><code>aya-obj</code> is a library for parsing such eBPF object files, with BTF and
+relocation support.</p>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>This example loads a simple eBPF program and runs it with <a href="https://github.com/qmonnet/rbpf">rbpf</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>aya_obj::{generated::bpf_insn, Object};
+
+<span class="comment">// Parse the object file
+</span><span class="kw">let </span>bytes = std::fs::read(<span class="string">"program.o"</span>).unwrap();
+<span class="kw">let </span><span class="kw-2">mut </span>object = Object::parse(<span class="kw-2">&amp;</span>bytes).unwrap();
+<span class="comment">// Relocate the programs
+</span><span class="attr">#[cfg(feature = <span class="string">"std"</span>)]
+</span><span class="kw">let </span>text_sections = std::collections::HashSet::new();
+<span class="attr">#[cfg(not(feature = <span class="string">"std"</span>))]
+</span><span class="kw">let </span>text_sections = hashbrown::HashSet::new();
+object.relocate_calls(<span class="kw-2">&amp;</span>text_sections).unwrap();
+object.relocate_maps(std::iter::empty(), <span class="kw-2">&amp;</span>text_sections).unwrap();
+
+<span class="comment">// Run with rbpf
+</span><span class="kw">let </span>function = object.functions.get(<span class="kw-2">&amp;</span>object.programs[<span class="string">"prog_name"</span>].function_key()).unwrap();
+<span class="kw">let </span>instructions = <span class="kw-2">&amp;</span>function.instructions;
+<span class="kw">let </span>data = <span class="kw">unsafe </span>{
+    core::slice::from_raw_parts(
+        instructions.as_ptr() <span class="kw">as </span><span class="kw-2">*const </span>u8,
+        instructions.len() * core::mem::size_of::&lt;bpf_insn&gt;(),
+    )
+};
+<span class="kw">let </span>vm = rbpf::EbpfVmNoData::new(<span class="prelude-val">Some</span>(data)).unwrap();
+<span class="kw">let </span>_return = vm.execute_program().unwrap();</code></pre></div>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.Map"><code>pub use maps::<a class="enum" href="maps/enum.Map.html" title="enum aya_obj::maps::Map">Map</a>;</code></div></li><li><div class="item-name"><code>pub use <a class="mod" href="obj/index.html" title="mod aya_obj::obj">obj</a>::*;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="btf/index.html" title="mod aya_obj::btf">btf</a></div><div class="desc docblock-short">BTF loading, parsing and relocation.</div></li><li><div class="item-name"><a class="mod" href="generated/index.html" title="mod aya_obj::generated">generated</a></div><div class="desc docblock-short">eBPF bindings generated by rust-bindgen</div></li><li><div class="item-name"><a class="mod" href="links/index.html" title="mod aya_obj::links">links</a></div><div class="desc docblock-short">Link type bindings.</div></li><li><div class="item-name"><a class="mod" href="maps/index.html" title="mod aya_obj::maps">maps</a></div><div class="desc docblock-short">Map struct and type bindings.</div></li><li><div class="item-name"><a class="mod" href="obj/index.html" title="mod aya_obj::obj">obj</a></div><div class="desc docblock-short">Object file loading, parsing, and relocation.</div></li><li><div class="item-name"><a class="mod" href="programs/index.html" title="mod aya_obj::programs">programs</a></div><div class="desc docblock-short">Program struct and type bindings.</div></li><li><div class="item-name"><a class="mod" href="relocation/index.html" title="mod aya_obj::relocation">relocation</a></div><div class="desc docblock-short">Program relocation handling.</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.VerifierLog.html" title="struct aya_obj::VerifierLog">Verifier<wbr>Log</a></div><div class="desc docblock-short">An error returned from the verifier.</div></li></ul></section></div></main></body></html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="All things pertaining to log4rs config."><title>log4rs::config - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="log4rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0-nightly (a47555110 2024-11-22)" data-channel="nightly" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../log4rs/index.html">log4rs</a><span class="version">1.3.0</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module config</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#configuration" title="Configuration">Configuration</a><ul><li><a href="#common-fields" title="Common Fields">Common Fields</a></li><li><a href="#loggers" title="Loggers">Loggers</a></li><li><a href="#the-root-logger" title="The Root Logger">The Root Logger</a></li><li><a href="#appenders" title="Appenders">Appenders</a></li><li><a href="#refresh-rate" title="Refresh Rate">Refresh Rate</a></li></ul></li></ul><h3><a href="#reexports">Module Items</a></h3><ul class="block"><li><a href="#reexports" title="Re-exports">Re-exports</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#traits" title="Traits">Traits</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate log4rs</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><span class="rustdoc-breadcrumbs"><a href="../index.html">log4rs</a></span><h1>Module <span>config</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/log4rs/config/mod.rs.html#1-95">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>All things pertaining to log4rs config.</p>
+<h2 id="configuration"><a class="doc-anchor" href="#configuration">§</a>Configuration</h2>
+<p>log4rs can be configured programmatically by using the builders in the <code>config</code>
+module to construct a log4rs <code>Config</code> object, which can be passed to the
+<code>init_config</code> function.</p>
+<p>The more common configuration method, however, is via a separate config file.
+The <code>init_file</code> function takes the path to a config file as well as a
+<code>Deserializers</code> object which is responsible for instantiating the various
+objects specified by the config file. The following section covers the exact
+configuration syntax. Examples of both the programatic and configuration files
+can be found in the
+<a href="https://github.com/estk/log4rs/tree/main/examples">examples directory</a>.</p>
+<h3 id="common-fields"><a class="doc-anchor" href="#common-fields">§</a>Common Fields</h3><h4 id="levelfilters"><a class="doc-anchor" href="#levelfilters">§</a>LevelFilter’s</h4>
+<ul>
+<li>Off</li>
+<li>Error</li>
+<li>Warn</li>
+<li>Info</li>
+<li>Debug</li>
+<li>Trace</li>
+</ul>
+<h4 id="filters"><a class="doc-anchor" href="#filters">§</a>Filters</h4>
+<p>The only accepted <code>filter</code> is of kind threshold with a level. The level must
+be a <a href="#levelfilters">LevelFilter</a>. One to many filters are allowed.</p>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>filters:
+  - kind: threshold
+    level: info</code></pre></div><h4 id="encoder"><a class="doc-anchor" href="#encoder">§</a>Encoder</h4>
+<p>An <code>encoder</code> consists of a kind: the default which is pattern, or json. If
+pattern is defined, the default pattern <code>{d} {l} {t} - {m}{n}</code> is used unless
+overridden. Refer to
+<a href="https://docs.rs/log4rs/latest/log4rs/encode/pattern/index.html#formatters">this documentation</a>
+for details regarding valid patterns.</p>
+<blockquote>
+<p>Note that the json encoder does not have any additional controls such as the
+pattern field.</p>
+</blockquote>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>encoder:
+  kind: pattern
+  pattern: &quot;{h({d(%+)(utc)} [{f}:{L}] {l:&lt;6} {M}:{m})}{n}&quot;</code></pre></div><h3 id="loggers"><a class="doc-anchor" href="#loggers">§</a>Loggers</h3>
+<p>A map of logger configurations.</p>
+<h4 id="logger-configuration"><a class="doc-anchor" href="#logger-configuration">§</a>Logger Configuration</h4>
+<p>The <em>name</em> of the logger is the yml tag.</p>
+<p>The <em>level</em> of the logger is optional and defaults to the parents log level.
+The level must be a <a href="#levelfilters">LevelFilter</a>.</p>
+<p>The <em>appenders</em> field is an optional list of <a href="#appenders">appenders</a> attached
+to the logger.</p>
+<p>The <em>additive</em> field is an optional boolean determining if the loggers parent
+will also be attached to this logger. The default is true.</p>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>loggers:
+  my_logger:
+    level: info
+    appenders:
+      - my_appender
+    additive: true</code></pre></div><h3 id="the-root-logger"><a class="doc-anchor" href="#the-root-logger">§</a>The Root Logger</h3>
+<p>Root is the required logger. It is the parent to all children loggers. To
+configure the Root, refer to <a href="#logger-configuration">the logger section</a>.</p>
+<blockquote>
+<p>Note: The root logger has no parent and therefore cannot the <em>additive</em>
+field does not apply.</p>
+</blockquote>
+<div class="example-wrap"><pre class="language-yml"><code>root:
+  level: info
+  appenders:
+    - my_appender</code></pre></div><h3 id="appenders"><a class="doc-anchor" href="#appenders">§</a>Appenders</h3>
+<p>All appenders require a unique identifying string for each
+<a href="#appender-config">appender configuration</a>.</p>
+<h4 id="appender-config"><a class="doc-anchor" href="#appender-config">§</a>Appender Config</h4>
+<p>Each Appender Kind has it’s own configuration. However, all accept
+<a href="#filters">filters</a>. The <code>kind</code> field is required in an appender configuration.</p>
+<h5 id="the-console-appender"><a class="doc-anchor" href="#the-console-appender">§</a>The Console Appender</h5>
+<p>The <em>target</em> field is optional and accepts <code>stdout</code> or <code>stderr</code>. It’s default
+value is stdout.</p>
+<p>The <em>tty_only</em> field is an optional boolean and dictates that the appender must
+only write when the target is a TTY. It’s default value is false.</p>
+<p>The <em>encoder</em> field is optional and can consist of multiple fields. Refer to
+the <a href="#encoder">encoder</a> documention.</p>
+<div class="example-wrap"><pre class="language-yml"><code>my_console_appender:
+  kind: console
+  target: stdout
+  tty_only: false</code></pre></div><h5 id="the-file-appender"><a class="doc-anchor" href="#the-file-appender">§</a>The File Appender</h5>
+<p>The <em>path</em> field is required and accepts environment variables of the form
+<code>$ENV{name_here}</code>. The path can be relative or absolute.</p>
+<p>The <em>encoder</em> field is optional and can consist of multiple fields. Refer to
+the <a href="#encoder">encoder</a> documention.</p>
+<p>The <em>append</em> field is an optional boolean and defaults to <code>true</code>. True will
+append to the log file if it exists, false will truncate the existing file.</p>
+<div class="example-wrap"><pre class="language-yml"><code>my_file_appender:
+  kind: file
+  path: $ENV{PWD}/log/test.log
+  append: true</code></pre></div><h5 id="the-rolling-file-appender"><a class="doc-anchor" href="#the-rolling-file-appender">§</a>The Rolling File Appender</h5>
+<p>The rolling file configuration is by far the most complex. Like the
+<a href="#the-file-appender">file appender</a>, the path to the log file is required
+with the <em>append</em> and the <em>encoders</em> optional fields.</p>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>my_rolling_appender:
+  kind: rolling_file
+  path: &quot;logs/test.log&quot;
+  policy:
+    kind: compound
+    trigger:
+      kind: size
+      limit: 1mb
+    roller:
+      kind: fixed_window
+      base: 1
+      count: 5
+      pattern: &quot;logs/test.{}.log&quot;</code></pre></div>
+<p>The new component is the <em>policy</em> field. A policy must have the <em>kind</em> field like most
+other components, the default (and only supported) policy is <code>kind: compound</code>.</p>
+<p>The <em>trigger</em> field is used to dictate when the log file should be rolled. It
+supports two types: <code>size</code>, and <code>time</code>.</p>
+<p>For <code>size</code>, it require a <em>limit</em> field. The <em>limit</em> field is a string which defines the maximum file size
+prior to a rolling of the file. The limit field requires one of the following
+units in bytes, case does not matter:</p>
+<ul>
+<li>b</li>
+<li>kb/kib</li>
+<li>mb/mib</li>
+<li>gb/gib</li>
+<li>tb/tib</li>
+</ul>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>trigger:
+  kind: size
+  limit: 10 mb</code></pre></div>
+<p>For <code>time</code>, it has three field, <em>interval</em>, <em>modulate</em> and <em>max_random_delay</em>.</p>
+<p>The <em>interval</em> field is a string which defines the time to roll the
+file. The interval field supports the following units(second will be used if the
+unit is not specified), case does not matter:</p>
+<ul>
+<li>second[s]</li>
+<li>minute[s]</li>
+<li>hour[s]</li>
+<li>day[s]</li>
+<li>week[s]</li>
+<li>month[s]</li>
+<li>year[s]</li>
+</ul>
+<blockquote>
+<p>Note: <code>log4j</code> treats <code>Sunday</code> as the first day of the week, but <code>log4rs</code> treats
+<code>Monday</code> as the first day of the week, which follows the <code>chrono</code> crate
+and the <code>ISO 8601</code> standard. So when using <code>week</code>, the log file will be rolled
+on <code>Monday</code> instead of <code>Sunday</code>.</p>
+</blockquote>
+<p>The <em>modulate</em> field is an optional boolean. It indicates whether the interval should
+be adjusted to cause the next rollover to occur on the interval boundary. For example,
+if the interval is 4 hours and the current hour is 3 am, when true, the first rollover
+will occur at 4 am and then next ones will occur at 8 am, noon, 4pm, etc. The default
+value is false.</p>
+<p>The <em>max_random_delay</em> field is an optional integer. It indicates the maximum number
+of seconds to randomly delay a rollover. By default, this is 0 which indicates no
+delay. This setting is useful on servers where multiple applications are configured
+to rollover log files at the same time and can spread the load of doing so across
+time.</p>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>trigger:
+    kind: time
+    interval: 1 day
+    modulate: false
+    max_random_delay: 0</code></pre></div>
+<p>The <em>roller</em> field supports two types: delete, and fixed_window. The delete
+roller does not take any other configuration fields. The fixed_window roller
+supports three fields: pattern, base, and count. The most current log file will
+always have the <em>base</em> index.</p>
+<p>The <em>pattern</em> field is used to rename files. The pattern must contain the
+double curly brace <code>{}</code>. For example <code>archive/foo.{}.log</code>. Each instance of
+<code>{}</code> will be replaced with the index number of the configuration file. Note
+that if the file extension of the pattern is <code>.gz</code> and the <code>gzip</code> Cargo
+feature is enabled, the archive files will be gzip-compressed.</p>
+<blockquote>
+<p>Note: This pattern field is only used for archived files. The <code>path</code> field
+of the higher level <code>rolling_file</code> will be used for the active log file.</p>
+</blockquote>
+<p>The <em>base</em> field is the starting index used to name rolling files.</p>
+<p>The <em>count</em> field is the exclusive maximum index used to name rolling files.
+However, be warned that the roller renames every file when a log rolls over.
+Having a large count value can negatively impact performance.</p>
+<blockquote>
+<p>Note: If you use the <code>triger: time</code>, the log file will be rolled before it
+gets written, which ensures that the logs are rolled in the correct position
+instead of leaving a single line of logs in the previous log file. However,
+this may cause a substantial slowdown if the <code>background</code> feature is not enabled.</p>
+</blockquote>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>roller:
+  kind: fixed_window
+  base: 1
+  count: 5
+  pattern: &quot;archive/journey-service.{}.log&quot;</code></pre></div>
+<p>or</p>
+<div class="example-wrap"><pre class="language-yml"><code>roller:
+  kind: delete</code></pre></div><h3 id="refresh-rate"><a class="doc-anchor" href="#refresh-rate">§</a>Refresh Rate</h3>
+<p>The <em>refresh_rate</em> accepts a u64 value in seconds. The field is used to
+determine how often log4rs will scan the configuration file for changes. If a
+change is discovered, the logger will reconfigure automatically.</p>
+<p>i.e.</p>
+<div class="example-wrap"><pre class="language-yml"><code>refresh_rate: 30 seconds</code></pre></div></div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.Appender"><code>pub use runtime::<a class="struct" href="runtime/struct.Appender.html" title="struct log4rs::config::runtime::Appender">Appender</a>;</code></div></li><li><div class="item-name" id="reexport.Config"><code>pub use runtime::<a class="struct" href="runtime/struct.Config.html" title="struct log4rs::config::runtime::Config">Config</a>;</code></div></li><li><div class="item-name" id="reexport.Logger"><code>pub use runtime::<a class="struct" href="runtime/struct.Logger.html" title="struct log4rs::config::runtime::Logger">Logger</a>;</code></div></li><li><div class="item-name" id="reexport.Root"><code>pub use runtime::<a class="struct" href="runtime/struct.Root.html" title="struct log4rs::config::runtime::Root">Root</a>;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="runtime/index.html" title="mod log4rs::config::runtime">runtime</a></div><div class="desc docblock-short">log4rs configuration</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Deserializers.html" title="struct log4rs::config::Deserializers">Deserializers</a></div><div class="desc docblock-short">A container of <code>Deserialize</code>rs.</div></li><li><div class="item-name"><a class="struct" href="struct.RawConfig.html" title="struct log4rs::config::RawConfig">RawConfig</a></div><div class="desc docblock-short">A raw deserializable log4rs configuration.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.FormatError.html" title="enum log4rs::config::FormatError">Format<wbr>Error</a></div><div class="desc docblock-short">The various types of formatting errors that can be generated.</div></li><li><div class="item-name"><a class="enum" href="enum.InitError.html" title="enum log4rs::config::InitError">Init<wbr>Error</a></div><div class="desc docblock-short">Errors found when initializing.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.Deserializable.html" title="trait log4rs::config::Deserializable">Deserializable</a></div><div class="desc docblock-short">A trait implemented by traits which are deserializable.</div></li><li><div class="item-name"><a class="trait" href="trait.Deserialize.html" title="trait log4rs::config::Deserialize">Deserialize</a></div><div class="desc docblock-short">A trait for objects that can deserialize log4rs components out of a config.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.create_raw_config.html" title="fn log4rs::config::create_raw_config">create_<wbr>raw_<wbr>config</a></div><div class="desc docblock-short">Create a log4rs logger using the provided raw config.</div></li><li><div class="item-name"><a class="fn" href="fn.init_config.html" title="fn log4rs::config::init_config">init_<wbr>config</a></div><div class="desc docblock-short">Initializes the global logger as a log4rs logger with the provided config.</div></li><li><div class="item-name"><a class="fn" href="fn.init_config_with_err_handler.html" title="fn log4rs::config::init_config_with_err_handler">init_<wbr>config_<wbr>with_<wbr>err_<wbr>handler</a></div><div class="desc docblock-short">Initializes the global logger as a log4rs logger with the provided config and error handler.</div></li><li><div class="item-name"><a class="fn" href="fn.init_file.html" title="fn log4rs::config::init_file">init_<wbr>file</a></div><div class="desc docblock-short">Initializes the global logger as a log4rs logger configured via a file.</div></li><li><div class="item-name"><a class="fn" href="fn.init_raw_config.html" title="fn log4rs::config::init_raw_config">init_<wbr>raw_<wbr>config</a></div><div class="desc docblock-short">Initializes the global logger as a log4rs logger using the provided raw config.</div></li><li><div class="item-name"><a class="fn" href="fn.load_config_file.html" title="fn log4rs::config::load_config_file">load_<wbr>config_<wbr>file</a></div><div class="desc docblock-short">Loads a log4rs logger configuration from a file.</div></li></ul></section></div></main></body></html>

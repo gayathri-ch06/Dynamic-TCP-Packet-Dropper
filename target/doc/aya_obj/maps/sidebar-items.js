@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Map","PinningError","PinningType"],"struct":["BtfMap","BtfMapDef","LegacyMap","bpf_map_def"]};

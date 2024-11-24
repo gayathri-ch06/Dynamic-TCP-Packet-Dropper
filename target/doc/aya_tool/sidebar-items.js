@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["write_to_file","write_to_file_fmt"],"mod":["bindgen","generate","rustfmt"]};
