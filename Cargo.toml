@@ -1,2 +1,2 @@
 [workspace]
-members = ["filter", "xdp-drop-common", "task"]
+members = ["filter", "xdp-drop-common", "task", "fuzz"]
