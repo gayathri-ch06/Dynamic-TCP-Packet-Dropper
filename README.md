@@ -73,7 +73,7 @@ cargo task run
 | `unblockip <IP>`      | Unblock all traffic to and from the specified IP address.                 | `unblockip 172.168.191.12`           |
 | `blockport <port>`    | Block all traffic on the specified port.                                  | `blockport 80`                       |
 | `unblockport <port>`  | Unblock all traffic on the specified port.                                | `unblockport 80`                     |
-| `exit`                | Terminate the application and return to the shell.                       | `exit`                               |
+| `exit`                | Terminate the application                                                 | `exit`                               |
 
 ## Monitoring
 Actions performed by the application are logged in the application.log file.
