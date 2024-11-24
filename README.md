@@ -9,17 +9,31 @@
 This project demonstrates how to block specific TCP packets on a designated port using eBPF (Extended Berkeley Packet Filter) with Rust. The program loads an eBPF kernel program that monitors network traffic and drops any TCP packets coming from or heading to port 4040. The user space code manages the interaction between the eBPF kernel program and the user, allowing configuration and logging.
 
 # Features
-1. ABlocks TCP packets on a specific port.
+1. Blocks TCP packets on a specific port.
 2. User-space program written in Rust to manage eBPF programs and maps.
 3. Modular structure with separation of concerns for eBPF program loading, packet filtering, and user interaction.
 4. Support for attaching to the network interface using XDP (eXpress Data Path).
 5. Logging and error-handling mechanisms in the user space.
+
+
+
+## Architecture
+- **eBPF Kernel Program**: The core program intercepts and inspects network packets, filtering out those targeting specific ports (default `4040`).
+- **Rust User-space Program**: Manages the interaction with eBPF, including loading the program, attaching it to network interfaces, and logging.
+- **Docker Container**: Dockerized environment for consistent and reproducible builds and deployments.
 
 # Installation
 1. **Rust**: Install Rust and the cargo build tool.
 2. **AYA**: This project uses the aya library, which is a pure Rust eBPF library that supports the eBPF targets.
 3. **Linux Kernel**: Linux distribution with kernel version 5.x or above to support eBPF.
 4. **LLVM**: Required for compiling eBPF programs.
+
+
+
+## Packages Installed in Docker
+- Ubuntu 22.04-based Docker image.
+- Essential development packages like `build-essential`, `libssl-dev`, `clang`, `llvm`, `git`, `nginx`, etc.
+- Rust and necessary toolchains (stable and nightly), along with **BPF-Linker** for eBPF compilation.
 
 # Main Components
 1. The project employs data structures that enable interaction between kernel space and userspace.
