@@ -9,7 +9,7 @@
 This project demonstrates how to block specific TCP packets on a designated port using eBPF (Extended Berkeley Packet Filter) with Rust. The program loads an eBPF kernel program that monitors network traffic and drops any TCP packets coming from or heading to port 4040. The user space code manages the interaction between the eBPF kernel program and the user, allowing configuration and logging.
 
 # Features
-1. ABlocks TCP packets on a specific port (default: 4040).
+1. ABlocks TCP packets on a specific port.
 2. User-space program written in Rust to manage eBPF programs and maps.
 3. Modular structure with separation of concerns for eBPF program loading, packet filtering, and user interaction.
 4. Support for attaching to the network interface using XDP (eXpress Data Path).
@@ -32,6 +32,41 @@ This project demonstrates how to block specific TCP packets on a designated port
 4. **Packet Dropping**: If a packet is targeting port 4040, it is dropped. Otherwise, it is allowed to pass through the network.
 
 
+## DOCKER IMAGE
+To use the Dynamic TCP Packet Dropper, first pull the Docker image from Docker Hub:
+```bash
+docker pull rmg0070/dynamictcppacketdropper
+```
+
+## Running the Application
+To run the application, use the following command:
+```bash
+sudo docker run --privileged -it -p 80:80 --name ebpf rmg0070/dynamictcppacketdropper:v1 /bin/bash
+```
+Note: Omit sudo if you are running on a Windows system.
+
+## Using the Application
+Once inside the Docker container, compile the eBPF code with the following command:
+```bash
+cargo task run
+```
+
+#### Available Commands
+
+| **Command**           | **Description**                                                            | **Example**                          |
+|-----------------------|----------------------------------------------------------------------------|--------------------------------------|
+| `blockip <IP>`        | Block all traffic to and from the specified IP address.                   | `blockip 172.168.191.12`             |
+| `unblockip <IP>`      | Unblock all traffic to and from the specified IP address.                 | `unblockip 172.168.191.12`           |
+| `blockport <port>`    | Block all traffic on the specified port.                                  | `blockport 80`                       |
+| `unblockport <port>`  | Unblock all traffic on the specified port.                                | `unblockport 80`                     |
+| `exit`                | Terminate the application and return to the shell.                       | `exit`                               |
+
+## Monitoring
+Actions performed by the application are logged in the application.log file.
+the above command compiles ebpf code.
+
+## Stopping the Application
+To stop the application, type exit and then use Ctrl+C to terminate the Docker container.
 
 ## Build eBPF
 
@@ -56,4 +91,4 @@ cargo task run
 ```bash
 cargo test
 ```
-
+## 
