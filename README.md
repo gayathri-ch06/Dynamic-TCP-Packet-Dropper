@@ -105,4 +105,7 @@ cargo task run
 ```bash
 cargo test
 ```
-## 
+## Fuzz
+```bash
+cargo fuzz run filter_ip_port
+```
