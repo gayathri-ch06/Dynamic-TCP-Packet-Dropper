@@ -49,18 +49,22 @@ This project demonstrates how to block specific TCP packets on a designated port
 ## DOCKER IMAGE
 To use the Dynamic TCP Packet Dropper, first pull the Docker image from Docker Hub:
 ```bash
-docker pull rmg0070/dynamictcppacketdropper
+docker pull rmg0070/dynamictcppacketdropper:
 ```
 
 ## Running the Application
 To run the application, use the following command:
 ```bash
-sudo docker run --privileged -it -p 80:80 --name ebpf rmg0070/dynamictcppacketdropper:v1 /bin/bash
+sudo docker run --privileged -it -p 80:80 --name ebpf rmg0070/dynamictcppacketdropper:v3 /bin/bash
 ```
 Note: Omit sudo if you are running on a Windows system.
 
 ## Using the Application
-Once inside the Docker container, compile the eBPF code with the following command:
+Once inside the Docker container, start nginx server
+```bash
+service nginx start
+```
+compile the eBPF code with the following command:
 ```bash
 cargo task run
 ```
