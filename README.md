@@ -55,7 +55,7 @@ docker pull rmg0070/dynamictcppacketdropper:
 ## Running the Application
 To run the application, use the following command:
 ```bash
-sudo docker run --privileged -it -p 80:80 --name ebpf rmg0070/dynamictcppacketdropper:v3 /bin/bash
+sudo docker run --privileged -it -p 80:80 --name ebpf rmg0070/dynamictcppacketdropper:v4 /bin/bash
 ```
 Note: Omit sudo if you are running on a Windows system.
 
